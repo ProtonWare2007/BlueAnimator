@@ -21,6 +21,8 @@ class Canvas:
         self.addFrame()
         self.borderSurface = pygame.Surface((self.HSize, self.VSize))
         self.borderSurface.fill(BLACK)
+        self.backGroundSurface = pygame.Surface((self.HSize-self.borderThickness*2, self.VSize-self.borderThickness*2))
+        self.backGroundSurface.fill(WHITE)
     
     def setTool(self, tool:str):
         if tool == "pen":
@@ -46,7 +48,6 @@ class Canvas:
     def updateOnionSkin(self):
         if self.frame > 0:
             self.onionSurface = self.frames[self.frame - 1].copy()
-            self.onionSurface.set_colorkey((255, 255, 255), pygame.RLEACCEL)
             self.onionSurface.set_alpha(50)
         else:
             self.onionSurface = None
@@ -54,7 +55,8 @@ class Canvas:
     def addFrame(self):
         self.frames.append( pygame.Surface((self.HSize - 2 * self.borderThickness,
         self.VSize - 2 * self.borderThickness,)) )
-        self.frames[self.frame].fill(WHITE)
+        self.frames[self.frame].fill(BLACK)
+        self.frames[self.frame].set_colorkey(BLACK, pygame.RLEACCEL)
 
     def handleEvents(self, event):
         if event.type == pygame.KEYDOWN:
@@ -84,13 +86,13 @@ class Canvas:
                             self.color,
                             self.recordedPts[0],
                             self.recordedPts[1],
-                            self.thickness,
+                            self.thickness*2,
                         )
                         pygame.draw.circle(
                             self.frames[self.frame],
                             self.color,
                             self.recordedPts[1],
-                            self.thickness // 2,
+                            self.thickness,
                         )
                         self.recordedPts[0] = self.recordedPts[1].copy()
 
@@ -104,16 +106,16 @@ class Canvas:
 
     def show(self, frame):
         frame.window.blit(self.borderSurface, (0, self.posy))
-        frame.window.blit(
-            self.frames[self.frame],
-            (self.posx + self.borderThickness, self.posy + self.borderThickness),
-        )
+        frame.window.blit(self.backGroundSurface, (self.borderThickness, self.posy+self.borderThickness))
         if self.onionSurface != None and not self.isexporting:
             frame.window.blit(
                 self.onionSurface,
                 (self.posx + self.borderThickness, self.posy + self.borderThickness),
             )
-
+        frame.window.blit(
+            self.frames[self.frame],
+            (self.posx + self.borderThickness, self.posy + self.borderThickness),
+        )
         if self.mouseinc:
             pygame.draw.circle(frame.window,
                 self.cursor_color,
