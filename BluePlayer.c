@@ -44,10 +44,7 @@ void FillPixels(SDL_Surface* surface)
 	else fseek(filePtr,-1,SEEK_CUR);
 	SDL_UnlockSurface(PaintSurface);
 	if((SDL_UpperBlit(PaintSurface,&windowRect,surface,&windowRect)) < 0)
-	{
-		//printf("%s",SDL_GetError());
 		exit(0x04);
-	}	
 }
 
 
@@ -90,8 +87,6 @@ int main(int argc, char **argv)
 	PaintSurface = SDL_CreateRGBSurface(0,windowRect.w,windowRect.h,32,0x00FF0000,0x0000FF00,0x000000FF,0xFF000000);
 	if(PaintSurface == NULL) exit(0x03);
 	clock_t starting_time;
-	//SDL_FillRect(PaintSurface,&windowRect,0xFFFFFFFF);
-	//Test
 	while(1)
 	{
 		while(SDL_PollEvent(&event))
@@ -109,9 +104,9 @@ int main(int argc, char **argv)
 		SDL_Delay((frame_time - (clock()-starting_time) / CLOCKS_PER_SEC)*1000);
 	}
 	Exit:
-	fclose(filePtr);
-	SDL_DestroyWindow(window);	
-	SDL_Quit();
+		fclose(filePtr);
+		SDL_DestroyWindow(window);	
+		SDL_Quit();
 	return 0;
 }
 
