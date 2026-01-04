@@ -3,6 +3,7 @@
 #include<SDL2/SDL.h>
 #include<stdio.h>
 #include<time.h>
+//#include<stdint.h>
 
 SDL_Window *window;
 SDL_Surface *surface;
@@ -43,8 +44,6 @@ void FillPixels(SDL_Surface* surface)
 		fseek(filePtr,5,SEEK_SET);
 	else fseek(filePtr,-1,SEEK_CUR);
 	SDL_UnlockSurface(PaintSurface);
-	if((SDL_UpperBlit(PaintSurface,&windowRect,surface,&windowRect)) < 0)
-		exit(0x04);
 }
 
 
@@ -62,7 +61,7 @@ void ReadHeader(int argc, char **argv)
 		exit(0x02);
 	
 	fread(&temp,sizeof(unsigned char),1,filePtr);
-	frame_time = 1/temp;
+	frame_time = 1/(float)temp;
 	
 	for(char i = 1; i >= 0;i--)
 	{
@@ -82,11 +81,13 @@ int main(int argc, char **argv)
 	SDL_Init(SDL_INIT_VIDEO);
 	windowRect.x = 0;windowRect.y = 0;
 	ReadHeader(argc, argv);
-	window = SDL_CreateWindow("BluePlayer - 1.0",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,windowRect.w,windowRect.h,0);
+	window = SDL_CreateWindow("BluePlayer - v1.0 2026",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,windowRect.w,windowRect.h,0);
 	surface = SDL_GetWindowSurface(window);
 	PaintSurface = SDL_CreateRGBSurface(0,windowRect.w,windowRect.h,32,0x00FF0000,0x0000FF00,0x000000FF,0xFF000000);
 	if(PaintSurface == NULL) exit(0x03);
-	clock_t starting_time;
+	Uint64 currentTicks = SDL_GetPerformanceCounter();
+	Uint64 frequency = SDL_GetPerformanceFrequency();
+	FillPixels(surface);
 	while(1)
 	{
 		while(SDL_PollEvent(&event))
@@ -98,10 +99,14 @@ int main(int argc, char **argv)
 			}
 		}
 		surface = SDL_GetWindowSurface(window);
-		starting_time = clock();
-		FillPixels(surface);
+		if(SDL_GetPerformanceCounter() - currentTicks >= frame_time*frequency)
+		{
+			currentTicks = SDL_GetPerformanceCounter();
+			FillPixels(surface);
+		}
+		if((SDL_UpperBlit(PaintSurface,&windowRect,surface,&windowRect)) < 0)
+			exit(0x04);
 		SDL_UpdateWindowSurface(window);
-		SDL_Delay((frame_time - (clock()-starting_time) / CLOCKS_PER_SEC)*1000);
 	}
 	Exit:
 		fclose(filePtr);

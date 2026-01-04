@@ -20,6 +20,7 @@ class Canvas:
         self.isexporting = False
         self.recordedPts = [[-1, -1], [-1, -1], 0]
         self.onionSurface = None
+        self.viewMode = 0
         self.addLayer()
         self.useLayer()
         self.addFrame()
@@ -80,6 +81,8 @@ class Canvas:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_f:
                 pygame.display.toggle_fullscreen()
+            elif event.key == pygame.K_SPACE:
+                self.viewMode = (self.viewMode + 1) % 2
         self.__mouseInCanvas()
         if event.type == pygame.MOUSEBUTTONUP:
             self.recordedPts = [[-1, -1], [-1, -1], 0]
@@ -91,12 +94,8 @@ class Canvas:
                     self.thickness = 1
             if event.type == pygame.MOUSEMOTION:
                 if pygame.mouse.get_pressed()[0]:
-                    self.recordedPts[self.recordedPts[2]][0] = (
-                        pygame.mouse.get_pos()[0] - self.borderThickness
-                    )
-                    self.recordedPts[self.recordedPts[2]][1] = (
-                        pygame.mouse.get_pos()[1] - self.posy - self.borderThickness
-                    )
+                    self.recordedPts[self.recordedPts[2]][0] = pygame.mouse.get_pos()[0] - self.borderThickness
+                    self.recordedPts[self.recordedPts[2]][1] = pygame.mouse.get_pos()[1] - self.posy - self.borderThickness
 
                     if self.recordedPts[1] != [-1, -1]:
                         pygame.draw.line(
@@ -126,9 +125,12 @@ class Canvas:
         self.backGroundSurface.fill(WHITE)
         if self.onionSurface != None and not self.isexporting:
             self.backGroundSurface.blit(self.onionSurface,(0, 0))
-        for frames in self.layers:
-            self.backGroundSurface.blit(frames[self.frame],(0, 0))
+        if self.viewMode == 0:
+            for frames in self.layers:
+                self.backGroundSurface.blit(frames[self.frame],(0, 0))
+        elif self.viewMode == 1:
+            self.backGroundSurface.blit(self.frames[self.frame],(0, 0))
         frame.window.blit(self.borderSurface, (0, self.posy))
         frame.window.blit(self.backGroundSurface, (self.borderThickness, self.posy+self.borderThickness))
         if self.mouseinc:
-            pygame.draw.circle(frame.window,self.cursor_color,pygame.mouse.get_pos(),self.thickness)
+            pygame.draw.circle(frame.window,(abs(180-self.cursor_color[0]),abs(180-self.cursor_color[1]),abs(180-self.cursor_color[2])),pygame.mouse.get_pos(),self.thickness)
