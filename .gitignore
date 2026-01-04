@@ -2,3 +2,5 @@ venv
 token.txt
 BlueAnimator.geany
 BluePlayer
+*.smedia
+__pycache__
