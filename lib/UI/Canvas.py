@@ -7,7 +7,9 @@ class Canvas:
         self.HSize = width
         self.VSize = height
         self.frames = list()
+        self.layers = list()
         self.frame = 0
+        self.layer = 0
         self.thickness = 5
         self.borderThickness = 10
         self.color = BLACK
@@ -43,6 +45,11 @@ class Canvas:
         if self.frame < len(self.frames):
             return True
         return False
+    
+    def layerExists(self):
+        if self.layer < len(self.layers):
+            return True
+        return False
 
     def updateOnionSkin(self):
         if self.frame > 0:
@@ -57,6 +64,13 @@ class Canvas:
         else:
             self.frames.append( pygame.Surface((self.HSize - 2 * self.borderThickness,self.VSize - 2 * self.borderThickness),flags=pygame.SRCALPHA) )
             self.frames[self.frame].fill((0,0,0,0))
+    
+    def addLayer(self):
+        frames = list()
+        for i in range(len(self.frames)):
+            frames.append(pygame.Surface((self.HSize - 2 * self.borderThickness,self.VSize - 2 * self.borderThickness),flags=pygame.SRCALPHA))
+        self.layers.append(frames)
+        #self.frames[self.frame].fill((0,0,0,0))
 
     def handleEvents(self, event):
         if event.type == pygame.KEYDOWN:
@@ -112,8 +126,4 @@ class Canvas:
         frame.window.blit(self.borderSurface, (0, self.posy))
         frame.window.blit(self.backGroundSurface, (self.borderThickness, self.posy+self.borderThickness))
         if self.mouseinc:
-            pygame.draw.circle(frame.window,
-                self.cursor_color,
-                pygame.mouse.get_pos(),
-                self.thickness,
-            )
+            pygame.draw.circle(frame.window,self.cursor_color,pygame.mouse.get_pos(),self.thickness)

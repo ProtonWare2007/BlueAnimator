@@ -1,4 +1,4 @@
-import pygame,math
+import pygame,math,time
 from lib.const import*
 
 class UIColorSelector:
@@ -14,11 +14,8 @@ class UIColorSelector:
         self.selectedColor = BLACK
         self.borderSurface = pygame.Surface((self.thickness*2+self.Size,self.thickness*2+self.Size))
         self.borderSurface.fill(BLACK)
-    
-    def load(self):    
-        self.__createColorRect()
 
-    def __createColorRect(self):
+    def createColorRect(self,app,resizeUI):
         for blue in range(0, 256, 1):
             colorImg = pygame.Surface((256, 256))
             colorImg.lock()
@@ -27,6 +24,10 @@ class UIColorSelector:
                     colorImg.set_at((red, green), (red, green, blue))
             colorImg.unlock()
             self.colorSurfaces.append(colorImg)
+            app.loadingBarRect.width += 2
+        app.setTitle("BlueAnimator v0.5 alpha")
+        app.started = True
+        resizeUI()
     
     def __mouseOnRect(self, mousex, mousey):
         if self.posx + self.thickness <= mousex <= self.posx + self.thickness + self.Size:
@@ -58,7 +59,6 @@ class UIColorSelector:
                 self.selectedColor = self.colorSurfaces[self.colorIndex].get_at((px,py))
                 if self.onColorSelectionf != None:
                      self.onColorSelectionf(self)
-               
 
     def show(self, frame):
         frame.window.blit(self.borderSurface,(self.posx,self.posy))

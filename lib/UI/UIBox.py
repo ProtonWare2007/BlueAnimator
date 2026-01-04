@@ -29,7 +29,8 @@ class MenuEntry:
 
 
 class UIBox:
-    def __init__(self, posx, posy, thickness, HMargin, VMargin, HSize=None, VSize=None):
+    def __init__(self, identifier, posx, posy, thickness, HMargin, VMargin, HSize=None, VSize=None):
+        self.id = identifier
         self.thickness = thickness
         if HSize != None:
             self.HSize = HSize
@@ -132,12 +133,12 @@ class UIBox:
                 entry = entry_element
                 if onhover:
                     if self.onHoverf != None:
-                        self.onHoverf(entry)
+                        self.onHoverf(self,entry)
 
                     if self.onClickf != None:
                         if event.type == pygame.MOUSEBUTTONDOWN:
                             if not events["clicked"]:
-                                self.onClickf(entry)
+                                self.onClickf(self,entry)
                             events["clicked"] = True
                         if event.type == pygame.MOUSEBUTTONUP:
                             events["clicked"] = False
@@ -147,11 +148,11 @@ class UIBox:
                             events["clicked"] = True
                         if event.type == pygame.MOUSEBUTTONUP:
                             if clicked:
-                                self.notOnClickf(entry)
+                                self.notOnClickf(self,entry)
                             events["clicked"] = False
                 
                 elif self.notOnHoverf != None:
-                    self.notOnHoverf(entry)
+                    self.notOnHoverf(self,entry)
 
                 HOffset += (self.HMargin + entry.textImg.get_width())
         self.previous_entry = entry

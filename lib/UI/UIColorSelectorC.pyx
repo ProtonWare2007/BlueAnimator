@@ -1,8 +1,7 @@
-cimport cython
 import pygame,math
 from lib.const import*
 
-cdef class UIColorSelector:
+class UIColorSelector:
     def __init__(self, posx, posy, thickness, HMargin, VMargin):
         self.thickness = thickness
         self.Size = 256
@@ -19,16 +18,15 @@ cdef class UIColorSelector:
     def load(self):    
         self.__createColorRect()
 
-    cdef void __createColorRect(self):
-		cdef int blue
-		cdef int green
-		cdef int red
-		cdef int maxValue = 256
-        for blue in range(0, maxValue, 1):
+    def __createColorRect(self):
+        cdef int blue
+        cdef int green
+        cdef int red
+        for blue in range(0, 256, 1):
             colorImg = pygame.Surface((256, 256))
             colorImg.lock()
-            for green in range(0, maxValue, 1):
-                for red in range(0, maxValue, 1):
+            for green in range(0, 256, 1):
+                for red in range(0, 256, 1):
                     colorImg.set_at((red, green), (red, green, blue))
             colorImg.unlock()
             self.colorSurfaces.append(colorImg)
@@ -63,7 +61,6 @@ cdef class UIColorSelector:
                 self.selectedColor = self.colorSurfaces[self.colorIndex].get_at((px,py))
                 if self.onColorSelectionf != None:
                      self.onColorSelectionf(self)
-               
 
     def show(self, frame):
         frame.window.blit(self.borderSurface,(self.posx,self.posy))
