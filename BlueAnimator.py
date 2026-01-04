@@ -12,7 +12,7 @@ class MainApp:
     def __init__(self, size: tuple):
         self.width, self.height = size
         self.window = pygame.display.set_mode(size, pygame.RESIZABLE)
-        pygame.display.set_caption("BlueAnimator - loading")
+        pygame.display.set_caption("BlueAnimator v1.0 alpha - loading")
         icon = pygame.image.load("BlueAnimator.png")
         pygame.display.set_icon(icon)
         self.components = list()
@@ -23,7 +23,7 @@ class MainApp:
         font = pygame.font.Font("freesansbold.ttf", size=40)
         self.textstatus = font.render("is loading", True, WHITE)
         font = pygame.font.Font("freesansbold.ttf", size=20)
-        self.pub = font.render("made by ProtonWare", True, WHITE)
+        self.pub = font.render("made by ProtonWare 2026", True, WHITE)
         self.font = pygame.font.Font("freesansbold.ttf", size=40)
         self.loadingBarRect = pygame.Rect(50,self.height - 100,0,40)
         self.counter = 1
@@ -143,13 +143,15 @@ def entryClicked(box,entry):
             canvas.layer += 1
             if not canvas.layerExists():
                 canvas.addLayer()
+            canvas.useLayer()
             layer_entry.text = "Layer:" + str(canvas.layer + 1)
-            #canvas.updateOnionSkin()
+            canvas.updateOnionSkin()
         elif entry.text == "<":
             if canvas.layer > 0:
                 canvas.layer -= 1
+                canvas.useLayer()
                 layer_entry.text = "Layer:" + str(canvas.layer + 1)
-            #canvas.updateOnionSkin()
+            canvas.updateOnionSkin()
 		
     if entry.text == "PenTool":
         canvas.setTool("pen")

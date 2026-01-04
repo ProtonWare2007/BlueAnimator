@@ -6,8 +6,8 @@ class Canvas:
         self.posx, self.posy = posx, posy
         self.HSize = width
         self.VSize = height
-        self.frames = list()
         self.layers = list()
+        self.frames = None
         self.frame = 0
         self.layer = 0
         self.thickness = 5
@@ -20,6 +20,8 @@ class Canvas:
         self.isexporting = False
         self.recordedPts = [[-1, -1], [-1, -1], 0]
         self.onionSurface = None
+        self.addLayer()
+        self.useLayer()
         self.addFrame()
         self.borderSurface = pygame.Surface((self.HSize, self.VSize))
         self.borderSurface.fill(BLACK)
@@ -59,18 +61,20 @@ class Canvas:
             self.onionSurface = None
 
     def addFrame(self):
-        if self.frame > 0:
-            self.frames.append(self.frames[self.frame - 1].copy())
-        else:
-            self.frames.append( pygame.Surface((self.HSize - 2 * self.borderThickness,self.VSize - 2 * self.borderThickness),flags=pygame.SRCALPHA) )
-            self.frames[self.frame].fill((0,0,0,0))
+        for frames in self.layers:
+            if self.frame > 0:
+                frames.append(frames[self.frame - 1].copy())
+            else:
+                frames.append( pygame.Surface((self.HSize - 2 * self.borderThickness,self.VSize - 2 * self.borderThickness),flags=pygame.SRCALPHA) )
+                frames[self.frame].fill((0,0,0,0))
     
+    def useLayer(self):
+        self.frames = self.layers[self.layer]
+
     def addLayer(self):
-        frames = list()
-        for i in range(len(self.frames)):
-            frames.append(pygame.Surface((self.HSize - 2 * self.borderThickness,self.VSize - 2 * self.borderThickness),flags=pygame.SRCALPHA))
-        self.layers.append(frames)
-        #self.frames[self.frame].fill((0,0,0,0))
+        self.layers.append(list())
+        for _ in self.layers[0]:
+            self.layers[len(self.layers)-1].append(pygame.Surface((self.HSize - 2 * self.borderThickness,self.VSize - 2 * self.borderThickness),flags=pygame.SRCALPHA))
 
     def handleEvents(self, event):
         if event.type == pygame.KEYDOWN:
@@ -122,7 +126,8 @@ class Canvas:
         self.backGroundSurface.fill(WHITE)
         if self.onionSurface != None and not self.isexporting:
             self.backGroundSurface.blit(self.onionSurface,(0, 0))
-        self.backGroundSurface.blit(self.frames[self.frame],(0, 0))
+        for frames in self.layers:
+            self.backGroundSurface.blit(frames[self.frame],(0, 0))
         frame.window.blit(self.borderSurface, (0, self.posy))
         frame.window.blit(self.backGroundSurface, (self.borderThickness, self.posy+self.borderThickness))
         if self.mouseinc:

@@ -25,7 +25,7 @@ class UIColorSelector:
             colorImg.unlock()
             self.colorSurfaces.append(colorImg)
             app.loadingBarRect.width += 2
-        app.setTitle("BlueAnimator v0.5 alpha")
+        app.setTitle("BlueAnimator v1.0 alpha")
         app.started = True
         resizeUI()
     
