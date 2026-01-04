@@ -13,8 +13,6 @@ class MainApp:
         self.width, self.height = size
         self.window = pygame.display.set_mode(size, pygame.RESIZABLE)
         pygame.display.set_caption("BlueAnimator v1.0 alpha - loading")
-        icon = pygame.image.load("BlueAnimator.png")
-        pygame.display.set_icon(icon)
         self.components = list()
         self.started = False
         self.clock = pygame.time.Clock()
@@ -70,7 +68,6 @@ class MainApp:
             else:
                 self.__loading()
             self.width, self.height = self.window.get_size()
-            #self.loadingBarRect.height = self.height - 100
             pygame.display.update()
 
 def windowResized(bar):
